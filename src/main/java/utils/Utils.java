@@ -23,6 +23,4 @@ public interface Utils {
         String deviceHash = deviceDto.getOs() + deviceDto.getOsVersion() + deviceDto.getDevice() + deviceDto.isMobile();
         return Base64.getEncoder().encodeToString(deviceHash.getBytes(StandardCharsets.UTF_8));
     }
-
-
 }

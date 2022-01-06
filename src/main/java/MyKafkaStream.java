@@ -77,7 +77,7 @@ public class MyKafkaStream {
                 .filter((key, value) -> value != null)
                 .peek((k, v) -> logger.info("event fraude key : {} value : {}", k, v))
                 .groupByKey()
-                .windowedBy(TimeWindows.of(Duration.ofMinutes(1)))
+                .windowedBy(TimeWindows.of(Duration.ofMinutes(5)))
                 .aggregate(FraudDto::new, (k, v, fraud) -> {
                     fraud.setUsername(v.getDetails().getUsername());
                     fraud.setIpAddress(v.getIpAddress());
@@ -108,7 +108,7 @@ public class MyKafkaStream {
         StreamsBuilder builder = new StreamsBuilder();
         final KTable<String, DeviceDto> knownDevices = builder.table(KNOWN_DEVICE_TOPIC, Consumed.with(stringSerde, deviceJsonSerde));
 
-        KStream<String, KeycloakDto> deviceStrem = builder
+        KStream<String, KeycloakDto> deviceStream = builder
                 .stream(LOGIN_ATTEMPT_TOPIC, Consumed.with(stringSerde, keycloakJsonSerde))
                 .filter((key, value) -> value != null)
                 .map((key, v) -> new KeyValue<>(v.getUsername() + ":" + getHashDevice(v.getDevice()), v))
@@ -116,10 +116,10 @@ public class MyKafkaStream {
                     if (right == null) return left;
                     return null;
                 })
-                .filter((key, value) -> value != null)
-                .peek((k, v) -> logger.info("new device attempt key: {} value : {}", k, v));
-        deviceStrem.to(NEW_DEVICE_ATTEMPT_TOPIC, Produced.with(stringSerde, keycloakJsonSerde));
-        deviceStrem
+                .filter((key, value) -> value != null);
+        deviceStream.to(NEW_DEVICE_ATTEMPT_TOPIC, Produced.with(stringSerde, keycloakJsonSerde));
+
+        deviceStream
                 .map((k, v) -> Utils.deviceFraudMapper(v))
                 .to(MALICIOUS_ATTEMPT_TOPIC, Produced.with(stringSerde, fraudSerde));
 
