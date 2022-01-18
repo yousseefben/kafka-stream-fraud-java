@@ -16,6 +16,9 @@ public class KeycloakDto {
     public Object sessionId;
     public String ipAddress;
     public String error;
+    public Double lat;
+    public Double lon;
+    public String city;
     public UserDetailsDto details;
     String username;
     DeviceDto device;
@@ -100,6 +103,29 @@ public class KeycloakDto {
         this.details = details;
     }
 
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLon() {
+        return lon;
+    }
+
+    public void setLon(Double lon) {
+        this.lon = lon;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     public String getUsername() {
         return username;

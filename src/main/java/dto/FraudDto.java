@@ -5,7 +5,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class FraudDto {
     String ipAddress;
     int nbLoginFailure = 0;
+    Double distance;
     String username;
+    public Double lat;
+    public Double lon;
     DeviceDto deviceDto;
     long time;
 
@@ -26,6 +29,13 @@ public class FraudDto {
         this.nbLoginFailure = nbLoginFailure;
     }
 
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
 
     public String getUsername() {
         return username;
@@ -33,6 +43,22 @@ public class FraudDto {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLon() {
+        return lon;
+    }
+
+    public void setLon(Double lon) {
+        this.lon = lon;
     }
 
     public DeviceDto getDeviceDto() {

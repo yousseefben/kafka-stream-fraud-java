@@ -1,9 +1,7 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import static utils.Utils.getPropsValues;
 
 
 public class TestSTreamApp {
@@ -22,19 +20,7 @@ public class TestSTreamApp {
 
     }
 
-    static Properties getPropsValues() {
-        Properties prop = new Properties();
-        try (InputStream input = TestSTreamApp.class.getClassLoader().getResourceAsStream("config.properties")) {
-            if (input != null) {
-                prop.load(input);
-                return prop;
-            }
-            logger.error("unable to find config.properties");
-        } catch (IOException ex) {
-            logger.error("error when reading properties: {}", ex.getMessage());
-        }
-        return prop;
-    }
+
 }
 
 

@@ -25,6 +25,7 @@ public class DeviceDto {
     private boolean isKnown = false;
 
 
+
     public String getIpAddress() {
         return ipAddress;
     }
@@ -64,7 +65,7 @@ public class DeviceDto {
         if (browser == null) {
             this.browser = OTHER;
         } else {
-            this.browser = browser + BROWSER_VERSION_SEPARATOR + (version == null ? UNKNOWN : version);
+            this.browser = new StringBuilder(browser).append(BROWSER_VERSION_SEPARATOR).append(version == null ? UNKNOWN : version).toString();
         }
     }
 

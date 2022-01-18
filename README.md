@@ -6,14 +6,13 @@
 
 ## Getting started
 
-***
 
-1. Bring the dokcer compose up
+1. Bring the docker compose up
     ```sh
     docker-compose up 
     ```
 
-2. Create different topic using `Ksql`, `Confluent Control Center` or `Kafka  cli`
+2. Create different topics using `Ksql`, `Confluent Control Center` or `Kafka  cli`
 
 
 3. make sure you update de `config.properties` file inside the project to put the right properties
@@ -25,6 +24,3 @@
    ```
 
 ## Enjoy!
-
-
-

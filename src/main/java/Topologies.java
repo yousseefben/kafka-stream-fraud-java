@@ -33,13 +33,7 @@ interface Topologies {
                 .filter((key, value) -> value != null)
                 .groupByKey()
                 .windowedBy(TimeWindows.of(Duration.ofMinutes(5)))
-                .aggregate(FraudDto::new, (k, v, fraud) -> {
-                    fraud.setUsername(v.getDetails().getUsername());
-                    fraud.setIpAddress(v.getIpAddress());
-                    fraud.setDeviceDto(v.getDevice());
-                    if ("LOGIN_ERROR".equals(v.type)) fraud.setNbLoginFailure(fraud.getNbLoginFailure() + 1);
-                    return fraud;
-                }, Materialized.with(stringSerde, fraudSerde)).toStream()
+                .aggregate(FraudDto::new, Topologies::applyAggregator, Materialized.with(stringSerde, fraudSerde)).toStream()
                 .map((Windowed<String> key, FraudDto fraud) -> new KeyValue<>(key.key(), fraud))
                 .filter((k, v) -> v.getNbLoginFailure() > 3)
                 .to(outputTopic, Produced.with(Serdes.String(), new FraudJsonSerde<>()));
@@ -53,6 +47,7 @@ interface Topologies {
         builder
                 .stream(inputTopic, Consumed.with(stringSerde, keycloakJsonSerde))
                 .filter((k, v) -> Arrays.asList(ELLIGIBLE_EVENT).contains(v.getType()))
+                .mapValues(Utils::enhanceKeycloak)
                 .to(outputTopic, Produced.with(stringSerde, keycloakJsonSerde));
 
         return builder.build();
@@ -80,4 +75,19 @@ interface Topologies {
         return builder.build();
     }
 
+    static FraudDto applyAggregator(String k, KeycloakDto v, FraudDto fraud) {
+        fraud.setUsername(v.getDetails().getUsername());
+        fraud.setIpAddress(v.getIpAddress());
+        fraud.setDeviceDto(v.getDevice());
+        if (v.getLat() != null && v.getLon() != null && fraud.getLat() != null && fraud.getLon() != null) {
+            double dist = Utils.distance(v.getLat(), v.getLon(), fraud.getLat(), fraud.getLon());
+            if (dist > fraud.getDistance()) fraud.setDistance(dist);
+        }
+        fraud.setLat(v.getLat());
+        fraud.setLon(v.getLon());
+        fraud.setTime(v.getTime());
+        if ("LOGIN_ERROR".equals(v.type)) fraud.setNbLoginFailure(fraud.getNbLoginFailure() + 1);
+
+        return fraud;
+    }
 }
