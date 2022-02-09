@@ -1,7 +1,8 @@
 # Preventing fraud ..
 
 ***
-**Checkout the blog post [MyBlog](https://)**
+**Checkout the blog [post](https://www.ybentaleb.me/blog/fraud-detection-keycloak-kafka)
+**
 ***
 
 ## Getting started
